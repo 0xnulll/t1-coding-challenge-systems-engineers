@@ -24,6 +24,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_NUM_PARTITIONS: 2 
 
   kafka-producer:
     container_name: t1-coding-challenge-kafka-producer
@@ -38,10 +39,13 @@ services:
       - "3001:3001"
     depends_on:
       - kafka-producer
+      - database
 
   calculation-service:
-    container_name: t1-coding-challenge-calculation-service
+    
     build: ./calculation-service
+    deploy:
+      replicas: 2
     depends_on:
       - kafka-producer
       - database

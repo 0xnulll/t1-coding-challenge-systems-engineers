@@ -20,3 +20,39 @@ You can find the challenge [here](https://docs.google.com/document/d/1fhYF3M1IKb
 7. Submit the link to your forked repository
 
 Happy Coding 🚀
+
+
+## Changes
+
+Here's a README section that outlines the changes in a clear and organized manner:
+
+---
+
+## Changelog
+
+### Modified Files
+- **Calculation Service**
+  - `package.json`: Updated dependencies and scripts.
+  - `src/db.ts`: database connection logic.
+  - `src/index.ts`: PNL calculation service.
+  - `src/db_service.ts`: Database service interaction.
+  - `src/transformation.ts`: Copied transformation logic.
+  - `src/types.ts`: Changed type added startTime, endTime.
+
+- **Docker Configuration**
+  - `docker-compose.yml`: Updated service configurations for multiple instances.
+
+- **Frontend Service**
+  - `package-lock.json`: Added mongodb.
+  - `package.json`: Added mongodb.
+  - `src/api.ts`: API services changes
+  - `src/db.ts`: Database connection logic.
+  - `src/open-position.ts`: Read open position from DB.
+  - `src/pnl.ts`: Read PNL from DB.
+  - `src/transformation.ts`: Migrated to calculation service.
+  - `src/types.ts`:  Migrated to calculation service.
+
+- **Kafka Producer**
+  - `src/index.ts`: Updated Kafka message production logic to have partition keys based on timeframe.
+                   Resetting keys on every market message so that all trades and market price message goes to same instance and not different to avoid saving changes to db on every trade.
+  - `src/types.ts`: Modified types for Kafka messages.

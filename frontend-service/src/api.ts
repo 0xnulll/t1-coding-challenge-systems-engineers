@@ -1,14 +1,20 @@
 import cors from 'cors';
 import express from 'express';
-import { getOpenPosition } from './open-position';
-import { getPnls } from './pnl';
+import {
+    getPnls
+} from './pnl';
+import {
+    getLastOpenPosition
+} from './open-position';
 
 export const app = express();
 
 app.use(cors());
 
 app.get('/health', (_req, res) => {
-    res.json({ status: 'OK' });
+    res.json({
+        status: 'OK'
+    });
 });
 
 function toStreamMessage(data: any) {
@@ -22,9 +28,9 @@ app.get('/open-position', (req, res) => {
     res.setHeader('Connection', 'keep-alive');
 
     // Function to send the open position periodically
-    const sendOpenPosition = () => {
-        const openPosition = getOpenPosition();
-        res.write(toStreamMessage(openPosition.toFixed(1)));
+    const sendOpenPosition = async () => {
+        const openPosition = await getLastOpenPosition();
+        res.write(toStreamMessage(openPosition));
     };
 
     // Send the initial position immediately

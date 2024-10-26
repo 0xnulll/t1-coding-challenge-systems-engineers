@@ -1,45 +1,20 @@
-import Kafka from 'node-rdkafka';
-import { toTradeMessage } from './transformation';
+import {
+    dbGetCollection
+} from "./db";
 
-let buyVolume = 0;
-let sellVolume = 0;
-export function getOpenPosition() {
-    return buyVolume - sellVolume
+/**
+ * Retrieves the last open position from the database.
+ *
+ * @returns {Promise<number | 0>} A promise that resolves to the last open position as a number, 
+ *                                or 0 if no position data is found.
+ */
+export async function getLastOpenPosition(): Promise < number | 0 > {
+    const dbCollection = dbGetCollection('position');
+    const data = await dbCollection.findOne({
+        type: "position"
+    });
+    if (data) {
+        return data.data.toFixed(5)
+    }
+    return 0;
 }
-
-const consumer = new Kafka.KafkaConsumer({
-    'group.id': 'frontend-service',
-    'metadata.broker.list': 'kafka:9092'
-}, {});
-
-consumer.connect({}, (err, metaData) => {
-    if (err) {
-        console.error('Error connecting to Kafka:', err);
-        return;
-    }
-
-    console.log('Connected to Kafka:', metaData);
-});
-
-consumer.on('ready', () => {
-    consumer.subscribe(['trades']);
-    consumer.consume();
-}).on('data', (data) => {
-    if (!data.value) {
-        throw new Error('Invalid message');
-    }
-
-    const message = JSON.parse(data.value.toString());
-    if (message.messageType !== 'trades') {
-        return;
-    }
-
-    const tradeMessage = toTradeMessage(message);
-    if (tradeMessage.tradeType === 'BUY') {
-        buyVolume += tradeMessage.volume
-    } else if (tradeMessage.tradeType === 'SELL') {
-        sellVolume += tradeMessage.volume;
-    } else {
-        throw new Error('Invalid trade type');
-    }
-});

@@ -2,13 +2,15 @@ export interface RawMarketMessage {
     messageType: "market";
     buyPrice: string;
     sellPrice: string;
-    time: string; // ISO 8601 format: "2024-01-01T19:00:00.000+00:00"
+    startTime: string; // ISO 8601 format: "2024-01-01T19:00:00.000+00:00"
+    endTime: string;
 }
 export interface MarketMessage {
     messageType: "market";
     buyPrice: number;
     sellPrice: number;
-    time: Date;
+    startTime: Date;
+    endTime: Date
 }
 
 export interface RawTradeMessage {

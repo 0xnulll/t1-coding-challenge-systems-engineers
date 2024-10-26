@@ -1,6 +1,8 @@
 import { Producer, ProducerGlobalConfig } from 'node-rdkafka';
 import { StreamProcessor } from './StreamProcessor';
 import { RawMarketMessage, RawTradeMessage } from './types';
+let timeFrameCounter = 0;
+let tradeCounter = 0;
 
 type RawMessage = RawMarketMessage | RawTradeMessage;
 
@@ -8,7 +10,7 @@ const producerConfig: ProducerGlobalConfig = {
     'metadata.broker.list': 'kafka:9092',
     'dr_cb': true,  // Delivery report callback
 };
-
+const NumberOfClient = 2;
 const producer = new Producer(producerConfig);
 
 producer.on('event.error', (err) => {
@@ -28,13 +30,21 @@ producer.on('ready', () => {
 });
 
 function onMessage(message: RawMessage) {
+    // reseting timeframe
     producer.produce(
         message.messageType,
-        null,
+        timeFrameCounter%NumberOfClient,
         Buffer.from(JSON.stringify(message)),
         null,
-        Date.now()
+        Date.now() 
     );
+
+    if (message.messageType === "market") {
+        timeFrameCounter += 1;
+        tradeCounter = 0;
+    } else {
+        tradeCounter += 1;
+    }
 }
 
 async function fetchStreamAndProduce() {

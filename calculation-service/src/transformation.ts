@@ -1,4 +1,9 @@
-import { MarketMessage, RawMarketMessage, RawTradeMessage, TradeMessage } from './types';
+import {
+    MarketMessage,
+    RawMarketMessage,
+    RawTradeMessage,
+    TradeMessage
+} from './types';
 
 
 export function toMarketMessage(raw: RawMarketMessage): MarketMessage {
@@ -6,7 +11,8 @@ export function toMarketMessage(raw: RawMarketMessage): MarketMessage {
         messageType: raw.messageType,
         buyPrice: parseFloat(raw.buyPrice),
         sellPrice: parseFloat(raw.sellPrice),
-        time: new Date(raw.time)
+        startTime: new Date(raw.startTime),
+        endTime: new Date(raw.endTime)
     };
 }
 
